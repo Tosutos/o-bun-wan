@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: obw
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/dev.db"
+      AUTH_SECRET: ${AUTH_SECRET}
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      RECYCLE_AI_URL: ${RECYCLE_AI_URL}
+    volumes:
+      - obw_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  obw_data:
+

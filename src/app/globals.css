@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, :root {
+  height: 100%;
+}
+
+body {
+  @apply bg-white text-gray-900;
+}
+
+.btn {
+  @apply px-6 py-3 rounded-lg font-semibold text-white bg-primary-500 hover:bg-primary-600 transition;
+}
+
+.btn-black {
+  @apply px-6 py-3 rounded-lg font-semibold text-white bg-black hover:bg-gray-900 transition;
+}
+
+.card {
+  @apply rounded-xl border border-gray-200 shadow-sm p-4 bg-white;
+}

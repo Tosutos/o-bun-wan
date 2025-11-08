@@ -1,0 +1,145 @@
+"use client";
+import { useEffect, useState } from 'react';
+import LiveTfjsCocoDetector from '@/components/LiveTfjsCocoDetector';
+import { guidanceFor } from '@/lib/scoring';
+import { mapLabelToCategoryWithConfig, type LabelMappingConfig, mapToCustomAndCategory, type CustomMapping } from '@/lib/model-config';
+
+type Classification = {
+  category: 'plastic' | 'paper' | 'metal' | 'glass' | 'other';
+  confidence: number;
+  guidance: string;
+};
+
+export default function RecyclePage() {
+  const [result, setResult] = useState<Classification | null>(null);
+  const [size, setSize] = useState<'small' | 'medium' | 'large' | ''>('');
+  const [loading, setLoading] = useState(false);
+  const [pointsAdded, setPointsAdded] = useState<number | null>(null);
+  const [mapCfg, setMapCfg] = useState<CustomMapping | null>(null);
+  const minConf = 0.6;
+  const [captured, setCaptured] = useState<{ image: string; label: string; score: number } | null>(null);
+  const [detectorKey, setDetectorKey] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/models/mapping.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((obj) => {
+        if (!cancelled && obj && typeof obj === 'object') setMapCfg(obj as CustomMapping);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function complete() {
+    if (!result) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: result.category, size: size || undefined }),
+      });
+      if (!res.ok) throw new Error('완료 처리 실패');
+      const data = (await res.json()) as { pointsAdded: number; totalPoints: number };
+      setPointsAdded(data.pointsAdded);
+      // Reset to initial camera view after successful completion
+      setCaptured(null);
+      setResult(null);
+      setSize('');
+      setDetectorKey((k) => k + 1);
+      setPointsAdded(null);
+      alert(`분리수거 완료! +${data.pointsAdded}점 (누적 ${data.totalPoints}점)`);
+    } catch (e) {
+      alert('완료 처리 중 문제가 발생했어요. 로그인 상태를 확인해주세요.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-black">실시간 카메라 탐지 (오분완)</h1>
+
+      {!captured && (
+        <div className="card space-y-3">
+          <LiveTfjsCocoDetector
+            key={detectorKey}
+            minScore={0.4}
+            onDetections={(dets) => {
+              if (!dets.length) return;
+              const best = dets[0];
+              if (best.score >= minConf) {
+                const { category } = mapToCustomAndCategory(best.class, mapCfg || undefined);
+                setResult({ category, confidence: best.score, guidance: guidanceFor(category) });
+              }
+            }}
+            showRoi
+            roiSizeRatio={0.8}
+            showOverlay
+            captureOnScore={0.7}
+            stopOnCapture
+            shouldCapture={(d) => {
+              const { category } = mapToCustomAndCategory(d.class, mapCfg || undefined);
+              return category !== 'other';
+            }}
+            onCapture={({ image, label, score }) => {
+              setCaptured({ image, label, score });
+              const { category } = mapToCustomAndCategory(label, mapCfg || undefined);
+              setResult({ category, confidence: score, guidance: guidanceFor(category) });
+            }}
+          />
+          <div className="text-xs text-gray-500">카메라 프레임 안의 물체를 ROI 박스에 맞춰주세요. (신뢰도 70% 이상 시 자동 캡쳐)</div>
+        </div>
+      )}
+
+      {result && (
+        <div className="card space-y-3">
+          {captured && (
+            <div>
+              <div className="text-sm text-gray-700 mb-2">캡쳐된 화면</div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={captured.image} alt="captured" className="w-full max-w-sm rounded border" />
+            </div>
+          )}
+          <div className="text-lg font-semibold">결과: {result.category.toUpperCase()}</div>
+          <div className="text-sm text-gray-600">신뢰도: {(result.confidence * 100).toFixed(0)}%</div>
+          {result.guidance && <p className="text-gray-800">안내: {result.guidance}</p>}
+          <div>
+            <label className="block text-sm font-medium mb-1">크기 선택 (선택)</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={size}
+              onChange={(e) => setSize(e.target.value as any)}
+            >
+              <option value="">선택 안 함</option>
+              <option value="small">작은 크기</option>
+              <option value="medium">중간 크기</option>
+              <option value="large">큰 크기</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button className="btn" onClick={complete} disabled={loading}>
+              {loading ? '처리 중...' : '분리수거 완료'}
+            </button>
+            <button
+              className="btn-black"
+              onClick={() => {
+                setCaptured(null);
+                setResult(null);
+                setDetectorKey((k) => k + 1);
+              }}
+            >
+              다시 촬영
+            </button>
+          </div>
+          {pointsAdded !== null && (
+            <div className="text-green-700 font-semibold">+{pointsAdded} 점 획득!</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,36 @@
+{
+  "custom": {
+    "glass": ["wine glass", "vase", "glass"],
+    "pet": ["bottle", "water bottle"],
+    "styrofoam": ["bowl", "foam"],
+    "can": ["can"],
+    "milkCarton": ["carton", "milk"],
+    "paperCup": ["cup"],
+    "paper": ["book", "paper"],
+    "box": ["box"],
+    "plasticBag": ["handbag", "backpack", "bag"],
+    "battery": ["battery"],
+    "rubberGloves": ["glove"],
+    "lamp": ["lamp"],
+    "cosmeticTube": ["toothbrush", "toothpaste", "cosmetic"],
+    "detergentTube": ["detergent", "cleaner", "soap"],
+    "fruitPackingNet": ["net", "mesh"]
+  },
+  "categoryByCustom": {
+    "glass": "glass",
+    "pet": "plastic",
+    "styrofoam": "plastic",
+    "can": "metal",
+    "milkCarton": "paper",
+    "paperCup": "paper",
+    "paper": "paper",
+    "box": "paper",
+    "plasticBag": "plastic",
+    "battery": "other",
+    "rubberGloves": "other",
+    "lamp": "glass",
+    "cosmeticTube": "plastic",
+    "detergentTube": "plastic",
+    "fruitPackingNet": "plastic"
+  }
+}
