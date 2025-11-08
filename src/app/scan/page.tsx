@@ -103,15 +103,20 @@ export default function ScanPage() {
               }}
             >
               다시 촬영
-            </button
-            >
-            <span className="text-sm text-gray-700">종류: <strong>
-${result.category}
-</strong></span>
+            </button>
+            <span className="px-3 py-1 rounded-full border border-orange-200 bg-orange-50 text-primary-700 text-sm">
+              종류: <strong>{result.category}</strong>
+            </span>
+            {captured && (
+              <span className="px-3 py-1 rounded-full border border-orange-200 bg-white text-gray-800 text-sm">
+                물체: <strong>{captured.label}</strong>
+              </span>
+            )}
           </div>
         </div>
       )}
     </div>
   );
 }
+
 
