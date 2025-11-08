@@ -4,6 +4,9 @@ import { computePoints, type Category } from '@/lib/scoring';
 import { getUserFromCookies } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: 'Missing DATABASE_URL env' }, { status: 503 });
+  }
   const user = await getUserFromCookies();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
