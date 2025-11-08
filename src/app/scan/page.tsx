@@ -53,7 +53,7 @@ export default function ScanPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-black">카메라 스캔</h1>
+      <h1 className="text-2xl font-bold text-black">스캔</h1>
 
       {!captured && (
         <div className="card space-y-3">
@@ -83,7 +83,7 @@ export default function ScanPage() {
               setResult({ category, confidence: score, guidance: guidanceFor(category) });
             }}
           />
-          <div className="text-xs text-gray-500">신뢰도 70% 이상 시 자동 캡쳐 후 정지합니다.</div>
+          <div className="text-xs text-gray-500">신뢰도 70% 이상 시 자동으로 캡처하고 카메라가 정지합니다.</div>
         </div>
       )}
 
@@ -92,7 +92,7 @@ export default function ScanPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={captured.image} alt="captured" className="w-full rounded border" />
           <div className="text-sm text-gray-600">신뢰도: {(result.confidence * 100).toFixed(0)}%</div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
             <button className="btn" onClick={next}>다음</button>
             <button
               className="btn-black"
@@ -103,10 +103,15 @@ export default function ScanPage() {
               }}
             >
               다시 촬영
-            </button>
+            </button
+            >
+            <span className="text-sm text-gray-700">종류: <strong>
+${result.category}
+</strong></span>
           </div>
         </div>
       )}
     </div>
   );
 }
+
