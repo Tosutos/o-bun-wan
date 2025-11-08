@@ -7,17 +7,23 @@ html, body, :root {
 }
 
 body {
-  @apply bg-white text-gray-900;
+  /* Soft orange-to-white gradient background and default text */
+  @apply text-gray-900 bg-gradient-to-b from-orange-50 via-white to-white;
 }
 
 .btn {
-  @apply px-6 py-3 rounded-lg font-semibold text-white bg-primary-500 hover:bg-primary-600 transition;
+  @apply px-6 py-3 rounded-full font-semibold text-white bg-primary-500 hover:bg-primary-600 shadow-cute transition-transform duration-150 ease-out;
 }
+.btn:hover { transform: translateY(-1px); }
 
 .btn-black {
-  @apply px-6 py-3 rounded-lg font-semibold text-white bg-black hover:bg-gray-900 transition;
+  @apply px-6 py-3 rounded-full font-semibold text-white bg-gray-800 hover:bg-gray-900 shadow-cute transition-transform duration-150 ease-out;
 }
+.btn-black:hover { transform: translateY(-1px); }
 
 .card {
-  @apply rounded-xl border border-gray-200 shadow-sm p-4 bg-white;
+  @apply rounded-cute border border-orange-200 shadow-cute p-4 bg-white/90 backdrop-blur-sm;
 }
+
+/* Cute headings */
+.font-display { font-family: var(--font-display), var(--font-sans), ui-sans-serif, system-ui, 'Noto Sans KR', sans-serif; }

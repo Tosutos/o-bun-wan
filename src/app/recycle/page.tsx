@@ -138,6 +138,14 @@ export default function RecyclePage() {
               다시 촬영
             </button>
           </div>
+          {result && (
+            <div className="text-sm text-gray-700">
+              종류: <strong>{result.category}</strong>
+              {captured ? (<>
+                {' '}· 물체: <strong>{captured.label}</strong>
+              </>) : null}
+            </div>
+          )}
           {pointsAdded !== null && (
             <div className="text-green-700 font-semibold">+{pointsAdded} 점 획득!</div>
           )}

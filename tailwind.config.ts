@@ -17,6 +17,16 @@ const config: Config = {
           black: '#0b0b0b',
         }
       },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'Apple SD Gothic Neo', 'Noto Sans KR', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-sans)', 'ui-sans-serif', 'system-ui', 'Apple SD Gothic Neo', 'Noto Sans KR', 'sans-serif'],
+      },
+      boxShadow: {
+        cute: '0 6px 20px rgba(249, 115, 22, 0.15)',
+      },
+      borderRadius: {
+        cute: '20px',
+      },
     },
   },
   plugins: [],
