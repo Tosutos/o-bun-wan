@@ -19,6 +19,22 @@ export default function ScanPage() {
   const [detectorKey, setDetectorKey] = useState(0);
   const minConf = 0.6;
 
+  // Cute emoji for each recycling category
+  function categoryEmoji(c: Classification['category']): string {
+    switch (c) {
+      case 'plastic':
+        return '🧴';
+      case 'paper':
+        return '📰';
+      case 'metal':
+        return '🥫';
+      case 'glass':
+        return '🍾';
+      default:
+        return '📦';
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
     fetch('/models/mapping.json')
@@ -104,13 +120,9 @@ export default function ScanPage() {
             >
               다시 촬영
             </button>
-            <span className="px-3 py-1 rounded-full border border-orange-200 bg-orange-50 text-primary-700 text-sm">
-              종류: <strong>{result.category}</strong>
-            </span>
+            <span className="px-3 py-1 rounded-full border border-orange-200 bg-orange-50 text-primary-700 text-sm">♻️ {categoryEmoji(result.category)} 종류: <strong>{result.category}</strong></span>
             {captured && (
-              <span className="px-3 py-1 rounded-full border border-orange-200 bg-white text-gray-800 text-sm">
-                물체: <strong>{captured.label}</strong>
-              </span>
+              <span className="px-3 py-1 rounded-full border border-orange-200 bg-white text-gray-800 text-sm">🏷️ 물체: <strong>{captured.label}</strong></span>
             )}
           </div>
         </div>
@@ -118,5 +130,6 @@ export default function ScanPage() {
     </div>
   );
 }
+
 
 
