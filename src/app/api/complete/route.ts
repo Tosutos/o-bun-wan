@@ -13,9 +13,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null as any);
   const category = body?.category as Category | undefined;
   const size = body?.size as 'small' | 'medium' | 'large' | undefined;
+  const assignmentCategory = body?.assignmentCategory as Category | undefined;
   if (!category) return NextResponse.json({ error: 'Missing category' }, { status: 400 });
 
-  const points = computePoints(category, size);
+  let points = computePoints(category, size);
+  if (assignmentCategory && assignmentCategory === category) {
+    points = 200; // double points for matching today assignment
+  }
 
   const event = await prisma.$transaction(async (tx) => {
     const ev = await tx.recyclingEvent.create({
@@ -32,5 +36,5 @@ export async function POST(req: NextRequest) {
   });
 
   const updated = await prisma.user.findUnique({ where: { id: user.id } });
-  return NextResponse.json({ pointsAdded: points, totalPoints: updated?.totalPoints ?? user.totalPoints });
+  return NextResponse.json({ pointsAdded: points, totalPoints: updated?.totalPoints ?? user.totalPoints, assignmentMatched: assignmentCategory === category });
 }

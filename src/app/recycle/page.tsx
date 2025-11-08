@@ -37,13 +37,13 @@ export default function RecyclePage() {
     if (!result) return;
     setLoading(true);
     try {
-      const res = await fetch('/api/complete', {
+      let assignmentCategory: any = undefined; try{ assignmentCategory = sessionStorage.getItem('obw_assignment_category') || undefined; } catch{}; const res = await fetch('/api/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: result.category, size: size || undefined }),
+        body: JSON.stringify({ category: result.category, size: size || undefined, assignmentCategory }),
       });
       if (!res.ok) throw new Error('완료 처리 실패');
-      const data = (await res.json()) as { pointsAdded: number; totalPoints: number };
+      const data = (await res.json()) as { pointsAdded: number; totalPoints: number; assignmentMatched?: boolean };
       setPointsAdded(data.pointsAdded);
       // Reset to initial camera view after successful completion
       setCaptured(null);
@@ -154,3 +154,4 @@ export default function RecyclePage() {
     </div>
   );
 }
+
